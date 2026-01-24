@@ -1,8 +1,8 @@
-# StayHub
+# GoalStays
 
 > Compare hotel prices from Booking.com, Hotels.com, Airbnb, Trivago and more — all in one place.
 
-🌐 **Live Site**: [stayhub.com](https://stayhub.com)
+🌐 **Live Site**: [goalstays.com](https://goalstays.com)
 
 ## ✨ Features
 
@@ -27,7 +27,7 @@
 git clone <YOUR_GIT_URL>
 
 # Navigate to project directory
-cd stayhub
+cd goalstays
 
 # Install dependencies
 npm install
@@ -50,4 +50,4 @@ src/
 
 ## 📄 License
 
-© 2026 StayHub. All rights reserved.
+© 2026 GoalStays. All rights reserved.

@@ -20,8 +20,8 @@ export default defineConfig(({ mode }) => ({
       registerType: "autoUpdate",
       includeAssets: ["favicon.ico", "icon-512.png", "apple-touch-icon.png"],
       manifest: {
-        name: "StayHub - Compare Hotel Prices",
-        short_name: "StayHub",
+        name: "GoalStays - Compare Hotel Prices",
+        short_name: "GoalStays",
         description: "Compare hotel prices from Booking.com, Hotels.com, Airbnb, Trivago and more.",
         theme_color: "#0066cc",
         background_color: "#f8fafc",

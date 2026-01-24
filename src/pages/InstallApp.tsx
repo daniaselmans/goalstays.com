@@ -54,12 +54,12 @@ const InstallApp = () => {
     ? [
         { icon: Share, text: 'Tap the Share button in Safari' },
         { icon: Plus, text: 'Scroll down and tap "Add to Home Screen"' },
-        { icon: Check, text: 'Tap "Add" to install StayHub' },
+        { icon: Check, text: 'Tap "Add" to install GoalStays' },
       ]
     : [
         { icon: Download, text: 'Click the install button below' },
         { icon: Check, text: 'Confirm the installation' },
-        { icon: Smartphone, text: 'Open StayHub from your home screen' },
+        { icon: Smartphone, text: 'Open GoalStays from your home screen' },
       ];
 
   return (
@@ -72,7 +72,7 @@ const InstallApp = () => {
               <div className="w-9 h-9 rounded-lg hero-gradient flex items-center justify-center">
                 <Plane className="h-4 w-4 text-primary-foreground" />
               </div>
-              <span className="text-lg font-bold text-foreground">StayHub</span>
+              <span className="text-lg font-bold text-foreground">GoalStays</span>
             </Link>
           </div>
         </div>
@@ -89,19 +89,19 @@ const InstallApp = () => {
           <div className="mb-8">
             <img
               src="/icon-512.png"
-              alt="StayHub App Icon"
+              alt="GoalStays App Icon"
               className="w-24 h-24 mx-auto rounded-2xl shadow-lg"
             />
           </div>
 
           {/* Title */}
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            {isInstalled ? 'StayHub is Installed!' : 'Install StayHub'}
+            {isInstalled ? 'GoalStays is Installed!' : 'Install GoalStays'}
           </h1>
           <p className="text-lg text-muted-foreground mb-10">
             {isInstalled
-              ? 'You can now access StayHub directly from your home screen.'
-              : 'Add StayHub to your home screen for the best experience. Works offline!'}
+              ? 'You can now access GoalStays directly from your home screen.'
+              : 'Add GoalStays to your home screen for the best experience. Works offline!'}
           </p>
 
           {isInstalled ? (
@@ -117,7 +117,7 @@ const InstallApp = () => {
               <div>
                 <Link to="/">
                   <Button variant="hero" size="xl">
-                    Open StayHub
+                    Open GoalStays
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
@@ -154,7 +154,7 @@ const InstallApp = () => {
               {!isIOS && deferredPrompt && (
                 <Button variant="hero" size="xl" onClick={handleInstallClick}>
                   <Download className="mr-2 h-5 w-5" />
-                  Install StayHub
+                  Install GoalStays
                 </Button>
               )}
 
