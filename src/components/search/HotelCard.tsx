@@ -2,7 +2,7 @@ import { Star, Heart, MapPin, Check, ExternalLink } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Hotel } from '@/data/mockHotels';
+import { Hotel } from '@/lib/api/hotels';
 
 interface HotelCardProps {
   hotel: Hotel;
@@ -105,10 +105,14 @@ const HotelCard = ({ hotel }: HotelCardProps) => {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {hotel.prices.map((priceInfo) => {
                 const isLowest = priceInfo.price === lowestPricePlatform.price;
+                const priceUrl = 'url' in priceInfo ? (priceInfo as any).url : undefined;
                 return (
-                  <button
+                  <a
                     key={priceInfo.platform}
-                    className={`relative p-3 rounded-lg border-2 transition-all duration-200 hover:shadow-md ${
+                    href={priceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`relative p-3 rounded-lg border-2 transition-all duration-200 hover:shadow-md cursor-pointer ${
                       isLowest
                         ? 'border-primary bg-primary/5 shadow-glow'
                         : 'border-border hover:border-primary/50'
@@ -135,7 +139,7 @@ const HotelCard = ({ hotel }: HotelCardProps) => {
                         </p>
                       )}
                     </div>
-                  </button>
+                  </a>
                 );
               })}
             </div>

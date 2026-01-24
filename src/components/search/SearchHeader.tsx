@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { format } from 'date-fns';
-import { Plane, Users, Search, Calendar as CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { format, parse } from 'date-fns';
+import { Plane, Users, Search, Calendar as CalendarIcon, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import {
@@ -19,12 +19,34 @@ import {
 import CityAutocomplete from '@/components/CityAutocomplete';
 import { cn } from '@/lib/utils';
 
-const SearchHeader = () => {
-  const [destination, setDestination] = useState('Paris, France');
-  const [checkIn, setCheckIn] = useState<Date | undefined>(new Date(2026, 0, 25));
-  const [checkOut, setCheckOut] = useState<Date | undefined>(new Date(2026, 0, 28));
+interface SearchHeaderProps {
+  onSearch?: (params: {
+    city: string;
+    checkIn: string;
+    checkOut: string;
+    guests: number;
+  }) => void;
+  isSearching?: boolean;
+}
+
+const SearchHeader = ({ onSearch, isSearching = false }: SearchHeaderProps) => {
+  const [searchParams] = useSearchParams();
+  
+  // Initialize from URL params or defaults
+  const [destination, setDestination] = useState(searchParams.get('city') || 'Paris, France');
+  const [checkIn, setCheckIn] = useState<Date | undefined>(() => {
+    const param = searchParams.get('checkIn');
+    return param ? parse(param, 'yyyy-MM-dd', new Date()) : new Date(2026, 0, 25);
+  });
+  const [checkOut, setCheckOut] = useState<Date | undefined>(() => {
+    const param = searchParams.get('checkOut');
+    return param ? parse(param, 'yyyy-MM-dd', new Date()) : new Date(2026, 0, 28);
+  });
+  const [guests, setGuests] = useState(parseInt(searchParams.get('guests') || '2'));
+  
   const [checkInOpen, setCheckInOpen] = useState(false);
   const [checkOutOpen, setCheckOutOpen] = useState(false);
+  const [guestsOpen, setGuestsOpen] = useState(false);
   const [checkInMonth, setCheckInMonth] = useState<Date>(checkIn || new Date());
   const [checkOutMonth, setCheckOutMonth] = useState<Date>(checkOut || new Date());
 
@@ -50,6 +72,24 @@ const SearchHeader = () => {
     setCheckOut(date);
     setCheckOutOpen(false);
   };
+
+  const handleSearch = useCallback(() => {
+    if (!checkIn || !checkOut || !destination) return;
+    
+    onSearch?.({
+      city: destination.split(',')[0].trim(),
+      checkIn: format(checkIn, 'yyyy-MM-dd'),
+      checkOut: format(checkOut, 'yyyy-MM-dd'),
+      guests,
+    });
+  }, [destination, checkIn, checkOut, guests, onSearch]);
+
+  // Auto-search on mount if we have all params
+  useEffect(() => {
+    if (destination && checkIn && checkOut && onSearch) {
+      handleSearch();
+    }
+  }, []);
 
   const CalendarHeader = ({
     month,
@@ -243,14 +283,60 @@ const SearchHeader = () => {
             
             <div className="h-8 w-px bg-border hidden sm:block" />
             
-            <div className="flex items-center gap-2 flex-1 min-w-[100px]">
-              <Users className="h-5 w-5 text-muted-foreground shrink-0" />
-              <span className="text-foreground">2 guests</span>
+            {/* Guests selector */}
+            <div className="flex-1 min-w-[100px]">
+              <Popover open={guestsOpen} onOpenChange={setGuestsOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-left font-normal h-10 px-3"
+                  >
+                    <Users className="mr-2 h-5 w-5 text-muted-foreground shrink-0" />
+                    <span className="text-foreground">{guests} guest{guests !== 1 ? 's' : ''}</span>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-48 p-3 bg-card z-[100]" align="start">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Guests</span>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => setGuests(Math.max(1, guests - 1))}
+                        disabled={guests <= 1}
+                      >
+                        -
+                      </Button>
+                      <span className="w-8 text-center">{guests}</span>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => setGuests(Math.min(10, guests + 1))}
+                        disabled={guests >= 10}
+                      >
+                        +
+                      </Button>
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
             </div>
             
-            <Button variant="hero" size="default" className="shrink-0">
-              <Search className="h-4 w-4 mr-2" />
-              Search
+            <Button 
+              variant="hero" 
+              size="default" 
+              className="shrink-0"
+              onClick={handleSearch}
+              disabled={!checkIn || !checkOut || !destination || isSearching}
+            >
+              {isSearching ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Search className="h-4 w-4 mr-2" />
+              )}
+              {isSearching ? 'Searching...' : 'Search'}
             </Button>
           </div>
         </div>
