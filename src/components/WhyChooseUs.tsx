@@ -36,7 +36,7 @@ const WhyChooseUs = () => {
           className="text-center mb-14"
         >
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Why <span className="text-gradient">StayHub</span>?
+            Why <span className="text-gradient">GoalStays</span>?
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             The smarter way to book your perfect accommodation.

@@ -11,7 +11,7 @@ const Header = () => {
             <div className="w-10 h-10 rounded-xl hero-gradient flex items-center justify-center">
               <Plane className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold text-primary-foreground">StayHub</span>
+            <span className="text-xl font-bold text-primary-foreground">GoalStays</span>
           </div>
 
           {/* Navigation */}

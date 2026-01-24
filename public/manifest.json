@@ -1,6 +1,6 @@
 {
-  "name": "StayHub",
-  "short_name": "StayHub",
+  "name": "GoalStays",
+  "short_name": "GoalStays",
   "description": "Compare hotel prices from Booking.com, Hotels.com, Airbnb, Trivago and more.",
   "start_url": "/",
   "display": "standalone",

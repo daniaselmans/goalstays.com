@@ -12,7 +12,7 @@ const Footer = () => {
               <div className="w-10 h-10 rounded-xl accent-gradient flex items-center justify-center">
                 <Plane className="h-5 w-5 text-accent-foreground" />
               </div>
-              <span className="text-xl font-bold">StayHub</span>
+              <span className="text-xl font-bold">GoalStays</span>
             </div>
             <p className="text-primary-foreground/70 text-sm mb-4">
               Your one-stop destination for comparing hotel prices across all major booking platforms.
@@ -75,7 +75,7 @@ const Footer = () => {
 
         <div className="border-t border-primary-foreground/10 mt-12 pt-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-primary-foreground/50">
-            <p>© {new Date().getFullYear()} StayHub. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} GoalStays. All rights reserved.</p>
             <div className="flex items-center gap-6">
               <a href="#" className="hover:text-primary-foreground transition-colors">Privacy</a>
               <a href="#" className="hover:text-primary-foreground transition-colors">Terms</a>

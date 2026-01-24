@@ -12,7 +12,7 @@ const SearchHeader = () => {
             <div className="w-9 h-9 rounded-lg hero-gradient flex items-center justify-center">
               <Plane className="h-4 w-4 text-primary-foreground" />
             </div>
-            <span className="text-lg font-bold text-foreground">StayHub</span>
+            <span className="text-lg font-bold text-foreground">GoalStays</span>
           </Link>
 
           <div className="hidden md:flex items-center gap-4">

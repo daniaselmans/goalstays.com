@@ -1,11 +1,17 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Search, MapPin, Calendar, Users, ChevronDown } from 'lucide-react';
+import { Search, Users, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import CityAutocomplete from '@/components/CityAutocomplete';
+import DateRangePicker from '@/components/DateRangePicker';
 import heroImage from '@/assets/hero-travel.jpg';
 
 const HeroSection = () => {
   const navigate = useNavigate();
+  const [destination, setDestination] = useState('');
+  const [checkIn, setCheckIn] = useState<Date | undefined>();
+  const [checkOut, setCheckOut] = useState<Date | undefined>();
 
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
@@ -62,44 +68,20 @@ const HeroSection = () => {
                 <label className="text-xs font-medium text-muted-foreground mb-2 block text-left">
                   Destination
                 </label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                  <input
-                    type="text"
-                    placeholder="Where are you going?"
-                    className="w-full h-12 pl-11 pr-4 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
+                <CityAutocomplete
+                  value={destination}
+                  onChange={setDestination}
+                />
               </div>
 
-              {/* Check-in */}
-              <div className="relative">
-                <label className="text-xs font-medium text-muted-foreground mb-2 block text-left">
-                  Check-in
-                </label>
-                <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                  <input
-                    type="text"
-                    placeholder="Add date"
-                    className="w-full h-12 pl-11 pr-4 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-              </div>
-
-              {/* Check-out */}
-              <div className="relative">
-                <label className="text-xs font-medium text-muted-foreground mb-2 block text-left">
-                  Check-out
-                </label>
-                <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                  <input
-                    type="text"
-                    placeholder="Add date"
-                    className="w-full h-12 pl-11 pr-4 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
+              {/* Date Pickers - spans 2 columns on md+ */}
+              <div className="md:col-span-2">
+                <DateRangePicker
+                  checkIn={checkIn}
+                  checkOut={checkOut}
+                  onCheckInChange={setCheckIn}
+                  onCheckOutChange={setCheckOut}
+                />
               </div>
 
               {/* Guests */}
