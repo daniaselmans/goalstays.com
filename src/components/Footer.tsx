@@ -73,8 +73,15 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-primary-foreground/10 mt-12 pt-8 text-center text-sm text-primary-foreground/50">
-          <p>© 2024 StayHub. All rights reserved.</p>
+        <div className="border-t border-primary-foreground/10 mt-12 pt-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-primary-foreground/50">
+            <p>© {new Date().getFullYear()} StayHub. All rights reserved.</p>
+            <div className="flex items-center gap-6">
+              <a href="#" className="hover:text-primary-foreground transition-colors">Privacy</a>
+              <a href="#" className="hover:text-primary-foreground transition-colors">Terms</a>
+              <a href="#" className="hover:text-primary-foreground transition-colors">Cookies</a>
+            </div>
+          </div>
         </div>
       </div>
     </footer>

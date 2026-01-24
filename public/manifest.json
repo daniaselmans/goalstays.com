@@ -1,0 +1,16 @@
+{
+  "name": "StayHub",
+  "short_name": "StayHub",
+  "description": "Compare hotel prices from Booking.com, Hotels.com, Airbnb, Trivago and more.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#0066cc",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
+  ]
+}
