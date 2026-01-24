@@ -1,0 +1,122 @@
+export interface Airport {
+  code: string;
+  name: string;
+  city: string;
+  country: string;
+  popular?: boolean;
+}
+
+export const airports: Airport[] = [
+  // Popular International Airports
+  { code: 'JFK', name: 'John F. Kennedy International', city: 'New York', country: 'United States', popular: true },
+  { code: 'LAX', name: 'Los Angeles International', city: 'Los Angeles', country: 'United States', popular: true },
+  { code: 'LHR', name: 'Heathrow', city: 'London', country: 'United Kingdom', popular: true },
+  { code: 'CDG', name: 'Charles de Gaulle', city: 'Paris', country: 'France', popular: true },
+  { code: 'DXB', name: 'Dubai International', city: 'Dubai', country: 'United Arab Emirates', popular: true },
+  { code: 'SIN', name: 'Changi', city: 'Singapore', country: 'Singapore', popular: true },
+  { code: 'HND', name: 'Haneda', city: 'Tokyo', country: 'Japan', popular: true },
+  { code: 'NRT', name: 'Narita International', city: 'Tokyo', country: 'Japan', popular: true },
+  { code: 'FRA', name: 'Frankfurt', city: 'Frankfurt', country: 'Germany', popular: true },
+  { code: 'AMS', name: 'Schiphol', city: 'Amsterdam', country: 'Netherlands', popular: true },
+  { code: 'BCN', name: 'El Prat', city: 'Barcelona', country: 'Spain', popular: true },
+  { code: 'FCO', name: 'Fiumicino', city: 'Rome', country: 'Italy', popular: true },
+  { code: 'SYD', name: 'Sydney Kingsford Smith', city: 'Sydney', country: 'Australia', popular: true },
+  { code: 'BKK', name: 'Suvarnabhumi', city: 'Bangkok', country: 'Thailand', popular: true },
+  { code: 'HKG', name: 'Hong Kong International', city: 'Hong Kong', country: 'Hong Kong', popular: true },
+
+  // US Airports
+  { code: 'ORD', name: "O'Hare International", city: 'Chicago', country: 'United States' },
+  { code: 'ATL', name: 'Hartsfield-Jackson Atlanta', city: 'Atlanta', country: 'United States' },
+  { code: 'DFW', name: 'Dallas/Fort Worth', city: 'Dallas', country: 'United States' },
+  { code: 'DEN', name: 'Denver International', city: 'Denver', country: 'United States' },
+  { code: 'SFO', name: 'San Francisco International', city: 'San Francisco', country: 'United States' },
+  { code: 'SEA', name: 'Seattle-Tacoma', city: 'Seattle', country: 'United States' },
+  { code: 'LAS', name: 'Harry Reid International', city: 'Las Vegas', country: 'United States' },
+  { code: 'MIA', name: 'Miami International', city: 'Miami', country: 'United States' },
+  { code: 'MCO', name: 'Orlando International', city: 'Orlando', country: 'United States' },
+  { code: 'BOS', name: 'Logan International', city: 'Boston', country: 'United States' },
+  { code: 'PHX', name: 'Phoenix Sky Harbor', city: 'Phoenix', country: 'United States' },
+  { code: 'IAH', name: 'George Bush Intercontinental', city: 'Houston', country: 'United States' },
+  { code: 'MSP', name: 'Minneapolis-Saint Paul', city: 'Minneapolis', country: 'United States' },
+  { code: 'DTW', name: 'Detroit Metropolitan', city: 'Detroit', country: 'United States' },
+  { code: 'PHL', name: 'Philadelphia International', city: 'Philadelphia', country: 'United States' },
+  { code: 'EWR', name: 'Newark Liberty', city: 'Newark', country: 'United States' },
+  { code: 'SAN', name: 'San Diego International', city: 'San Diego', country: 'United States' },
+  { code: 'TPA', name: 'Tampa International', city: 'Tampa', country: 'United States' },
+  { code: 'PDX', name: 'Portland International', city: 'Portland', country: 'United States' },
+  { code: 'HNL', name: 'Daniel K. Inouye', city: 'Honolulu', country: 'United States' },
+
+  // European Airports
+  { code: 'LGW', name: 'Gatwick', city: 'London', country: 'United Kingdom' },
+  { code: 'STN', name: 'Stansted', city: 'London', country: 'United Kingdom' },
+  { code: 'MAN', name: 'Manchester', city: 'Manchester', country: 'United Kingdom' },
+  { code: 'EDI', name: 'Edinburgh', city: 'Edinburgh', country: 'United Kingdom' },
+  { code: 'ORY', name: 'Orly', city: 'Paris', country: 'France' },
+  { code: 'MUC', name: 'Munich', city: 'Munich', country: 'Germany' },
+  { code: 'BER', name: 'Berlin Brandenburg', city: 'Berlin', country: 'Germany' },
+  { code: 'ZRH', name: 'Zurich', city: 'Zurich', country: 'Switzerland' },
+  { code: 'VIE', name: 'Vienna', city: 'Vienna', country: 'Austria' },
+  { code: 'MAD', name: 'Adolfo Suárez Madrid-Barajas', city: 'Madrid', country: 'Spain' },
+  { code: 'AGP', name: 'Málaga-Costa del Sol', city: 'Málaga', country: 'Spain' },
+  { code: 'PMI', name: 'Palma de Mallorca', city: 'Palma', country: 'Spain' },
+  { code: 'MXP', name: 'Malpensa', city: 'Milan', country: 'Italy' },
+  { code: 'VCE', name: 'Marco Polo', city: 'Venice', country: 'Italy' },
+  { code: 'NAP', name: 'Naples International', city: 'Naples', country: 'Italy' },
+  { code: 'LIS', name: 'Humberto Delgado', city: 'Lisbon', country: 'Portugal' },
+  { code: 'OPO', name: 'Francisco Sá Carneiro', city: 'Porto', country: 'Portugal' },
+  { code: 'ATH', name: 'Eleftherios Venizelos', city: 'Athens', country: 'Greece' },
+  { code: 'IST', name: 'Istanbul', city: 'Istanbul', country: 'Turkey' },
+  { code: 'PRG', name: 'Václav Havel', city: 'Prague', country: 'Czech Republic' },
+  { code: 'BUD', name: 'Ferenc Liszt', city: 'Budapest', country: 'Hungary' },
+  { code: 'WAW', name: 'Chopin', city: 'Warsaw', country: 'Poland' },
+  { code: 'CPH', name: 'Copenhagen', city: 'Copenhagen', country: 'Denmark' },
+  { code: 'ARN', name: 'Stockholm Arlanda', city: 'Stockholm', country: 'Sweden' },
+  { code: 'OSL', name: 'Oslo Gardermoen', city: 'Oslo', country: 'Norway' },
+  { code: 'HEL', name: 'Helsinki-Vantaa', city: 'Helsinki', country: 'Finland' },
+  { code: 'DUB', name: 'Dublin', city: 'Dublin', country: 'Ireland' },
+  { code: 'BRU', name: 'Brussels', city: 'Brussels', country: 'Belgium' },
+
+  // Asia Pacific
+  { code: 'ICN', name: 'Incheon', city: 'Seoul', country: 'South Korea' },
+  { code: 'PEK', name: 'Beijing Capital', city: 'Beijing', country: 'China' },
+  { code: 'PVG', name: 'Pudong', city: 'Shanghai', country: 'China' },
+  { code: 'KUL', name: 'Kuala Lumpur International', city: 'Kuala Lumpur', country: 'Malaysia' },
+  { code: 'DEL', name: 'Indira Gandhi', city: 'New Delhi', country: 'India' },
+  { code: 'BOM', name: 'Chhatrapati Shivaji', city: 'Mumbai', country: 'India' },
+  { code: 'MEL', name: 'Melbourne', city: 'Melbourne', country: 'Australia' },
+  { code: 'BNE', name: 'Brisbane', city: 'Brisbane', country: 'Australia' },
+  { code: 'AKL', name: 'Auckland', city: 'Auckland', country: 'New Zealand' },
+  { code: 'CGK', name: 'Soekarno-Hatta', city: 'Jakarta', country: 'Indonesia' },
+  { code: 'DPS', name: 'Ngurah Rai', city: 'Bali', country: 'Indonesia' },
+  { code: 'MNL', name: 'Ninoy Aquino', city: 'Manila', country: 'Philippines' },
+  { code: 'HAN', name: 'Noi Bai', city: 'Hanoi', country: 'Vietnam' },
+  { code: 'SGN', name: 'Tan Son Nhat', city: 'Ho Chi Minh City', country: 'Vietnam' },
+
+  // Middle East
+  { code: 'DOH', name: 'Hamad International', city: 'Doha', country: 'Qatar' },
+  { code: 'AUH', name: 'Abu Dhabi International', city: 'Abu Dhabi', country: 'United Arab Emirates' },
+  { code: 'TLV', name: 'Ben Gurion', city: 'Tel Aviv', country: 'Israel' },
+  { code: 'CAI', name: 'Cairo International', city: 'Cairo', country: 'Egypt' },
+  { code: 'CMN', name: 'Mohammed V', city: 'Casablanca', country: 'Morocco' },
+  { code: 'RAK', name: 'Marrakech Menara', city: 'Marrakech', country: 'Morocco' },
+
+  // Americas
+  { code: 'YYZ', name: 'Toronto Pearson', city: 'Toronto', country: 'Canada' },
+  { code: 'YVR', name: 'Vancouver International', city: 'Vancouver', country: 'Canada' },
+  { code: 'YUL', name: 'Montreal-Trudeau', city: 'Montreal', country: 'Canada' },
+  { code: 'MEX', name: 'Benito Juárez', city: 'Mexico City', country: 'Mexico' },
+  { code: 'CUN', name: 'Cancún International', city: 'Cancún', country: 'Mexico' },
+  { code: 'GRU', name: 'São Paulo-Guarulhos', city: 'São Paulo', country: 'Brazil' },
+  { code: 'GIG', name: 'Galeão', city: 'Rio de Janeiro', country: 'Brazil' },
+  { code: 'EZE', name: 'Ministro Pistarini', city: 'Buenos Aires', country: 'Argentina' },
+  { code: 'SCL', name: 'Arturo Merino Benítez', city: 'Santiago', country: 'Chile' },
+  { code: 'BOG', name: 'El Dorado', city: 'Bogotá', country: 'Colombia' },
+  { code: 'LIM', name: 'Jorge Chávez', city: 'Lima', country: 'Peru' },
+
+  // Caribbean
+  { code: 'SJU', name: 'Luis Muñoz Marín', city: 'San Juan', country: 'Puerto Rico' },
+  { code: 'NAS', name: 'Lynden Pindling', city: 'Nassau', country: 'Bahamas' },
+  { code: 'MBJ', name: 'Sangster International', city: 'Montego Bay', country: 'Jamaica' },
+  { code: 'PUJ', name: 'Punta Cana', city: 'Punta Cana', country: 'Dominican Republic' },
+  { code: 'AUA', name: 'Queen Beatrix', city: 'Oranjestad', country: 'Aruba' },
+];
