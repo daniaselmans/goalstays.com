@@ -7,8 +7,10 @@ import SearchHeader from '@/components/search/SearchHeader';
 import SearchFilters from '@/components/search/SearchFilters';
 import HotelCard from '@/components/search/HotelCard';
 import { Button } from '@/components/ui/button';
-import { searchHotels, Hotel, SearchParams } from '@/lib/api/hotels';
+import { searchHotels, Hotel } from '@/lib/api/hotels';
 import { useToast } from '@/hooks/use-toast';
+import { SearchFilters as SearchFiltersType, defaultFilters } from '@/types/filters';
+import { useHotelFilters } from '@/hooks/useHotelFilters';
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
@@ -18,6 +20,7 @@ const SearchResults = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState('recommended');
+  const [filters, setFilters] = useState<SearchFiltersType>(defaultFilters);
   const [searchMeta, setSearchMeta] = useState<{
     city: string;
     checkIn: string;
@@ -85,7 +88,10 @@ const SearchResults = () => {
     }
   }, [toast]);
 
-  const sortedHotels = [...hotels].sort((a, b) => {
+  // Apply filters
+  const filteredHotels = useHotelFilters(hotels, filters);
+
+  const sortedHotels = [...filteredHotels].sort((a, b) => {
     if (sortBy === 'price-low') return a.lowestPrice - b.lowestPrice;
     if (sortBy === 'price-high') return b.lowestPrice - a.lowestPrice;
     if (sortBy === 'rating') return b.rating - a.rating;
@@ -111,7 +117,7 @@ const SearchResults = () => {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Filters Sidebar */}
           <aside className="w-full lg:w-72 shrink-0">
-            <SearchFilters />
+            <SearchFilters filters={filters} onChange={setFilters} />
           </aside>
 
           {/* Results */}
@@ -127,7 +133,7 @@ const SearchResults = () => {
                     'Searching across platforms...'
                   ) : searchMeta ? (
                     <>
-                      {searchMeta.total} properties found • {formatDateRange()}
+                      {filteredHotels.length} of {hotels.length} properties • {formatDateRange()}
                       {searchMeta.sources && (
                         <span className="block text-xs mt-1">
                           Sources: Booking ({searchMeta.sources.booking}), Hotels.com ({searchMeta.sources.hotels}), 
