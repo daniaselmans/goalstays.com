@@ -1,9 +1,12 @@
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { Search, MapPin, Calendar, Users, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import heroImage from '@/assets/hero-travel.jpg';
 
 const HeroSection = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
       {/* Background Image */}
@@ -115,7 +118,12 @@ const HeroSection = () => {
             </div>
 
             <div className="mt-6 flex justify-center">
-              <Button variant="hero" size="xl" className="min-w-[200px]">
+              <Button 
+                variant="hero" 
+                size="xl" 
+                className="min-w-[200px]"
+                onClick={() => navigate('/search')}
+              >
                 <Search className="mr-2 h-5 w-5" />
                 Search All Sites
               </Button>
