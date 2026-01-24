@@ -38,7 +38,7 @@ const HeroSection = () => {
     } else if (activeTab === 'flights') {
       navigate(`/search?tab=flights&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(flightDestination)}`);
     } else if (activeTab === 'cars') {
-      navigate(`/search?tab=cars&pickup=${encodeURIComponent(pickupLocation)}&dropoff=${encodeURIComponent(dropoffLocation)}`);
+      navigate(`/search/cars?pickup=${encodeURIComponent(pickupLocation)}&dropoff=${encodeURIComponent(dropoffLocation || pickupLocation)}`);
     }
   };
 
