@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Search, Users, ChevronDown, Hotel, Plane, Car, Calendar, Clock, User } from 'lucide-react';
+import { Search, Users, ChevronDown, Hotel, Plane, Car, Calendar, Clock, User, ArrowLeftRight, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import CityAutocomplete from '@/components/CityAutocomplete';
@@ -26,6 +26,7 @@ const HeroSection = () => {
   const [passengers, setPassengers] = useState(1);
 
   // Car rental state
+  const [carTripType, setCarTripType] = useState<'roundtrip' | 'oneway'>('roundtrip');
   const [pickupLocation, setPickupLocation] = useState('');
   const [dropoffLocation, setDropoffLocation] = useState('');
   const [pickupDate, setPickupDate] = useState<Date | undefined>();
@@ -38,7 +39,8 @@ const HeroSection = () => {
     } else if (activeTab === 'flights') {
       navigate(`/search?tab=flights&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(flightDestination)}`);
     } else if (activeTab === 'cars') {
-      navigate(`/search/cars?pickup=${encodeURIComponent(pickupLocation)}&dropoff=${encodeURIComponent(dropoffLocation || pickupLocation)}`);
+      const dropoff = carTripType === 'oneway' ? dropoffLocation : pickupLocation;
+      navigate(`/search/cars?pickup=${encodeURIComponent(pickupLocation)}&dropoff=${encodeURIComponent(dropoff || pickupLocation)}&tripType=${carTripType}`);
     }
   };
 
@@ -205,7 +207,35 @@ const HeroSection = () => {
 
               {/* Cars Tab */}
               <TabsContent value="cars" className="mt-0">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                {/* Trip Type Toggle */}
+                <div className="flex gap-2 mb-4">
+                  <button
+                    type="button"
+                    onClick={() => setCarTripType('roundtrip')}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      carTripType === 'roundtrip'
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-background/50 text-foreground hover:bg-background/70'
+                    }`}
+                  >
+                    <ArrowLeftRight className="h-4 w-4" />
+                    Round-trip
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCarTripType('oneway')}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      carTripType === 'oneway'
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-background/50 text-foreground hover:bg-background/70'
+                    }`}
+                  >
+                    <ArrowRight className="h-4 w-4" />
+                    One-way
+                  </button>
+                </div>
+
+                <div className={`grid grid-cols-1 gap-4 ${carTripType === 'oneway' ? 'md:grid-cols-5' : 'md:grid-cols-4'}`}>
                   <div className="relative">
                     <label className="text-xs font-medium text-muted-foreground mb-2 block text-left">
                       Pick-up Location
@@ -218,17 +248,19 @@ const HeroSection = () => {
                     />
                   </div>
 
-                  <div className="relative">
-                    <label className="text-xs font-medium text-muted-foreground mb-2 block text-left">
-                      Drop-off Location
-                    </label>
-                    <LocationAutocomplete
-                      value={dropoffLocation}
-                      onChange={setDropoffLocation}
-                      placeholder="Same as pick-up"
-                      type="both"
-                    />
-                  </div>
+                  {carTripType === 'oneway' && (
+                    <div className="relative">
+                      <label className="text-xs font-medium text-muted-foreground mb-2 block text-left">
+                        Drop-off Location
+                      </label>
+                      <LocationAutocomplete
+                        value={dropoffLocation}
+                        onChange={setDropoffLocation}
+                        placeholder="Different location"
+                        type="both"
+                      />
+                    </div>
+                  )}
 
                   <div className="md:col-span-1">
                     <DateRangePicker
