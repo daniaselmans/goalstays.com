@@ -1,9 +1,11 @@
 import { motion } from 'framer-motion';
-import { Plane, Clock, ArrowRight, ExternalLink } from 'lucide-react';
+import { Plane, Clock, ExternalLink, Heart } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { FlightResult, FlightLeg } from '@/lib/api/flights';
+import { useFavorites } from '@/hooks/useFavorites';
+import { useAuthContext } from '@/contexts/AuthContext';
 
 interface FlightCardProps {
   flight: FlightResult;
@@ -34,10 +36,30 @@ const LegDisplay = ({ leg, isLast }: { leg: FlightLeg; isLast: boolean }) => (
 );
 
 const FlightCard = ({ flight }: FlightCardProps) => {
+  const { user } = useAuthContext();
+  const { isFavorite, toggleFavorite } = useFavorites();
+  
   const lowestPriceItem = flight.prices[0];
   const savings = flight.prices.length > 1 
     ? flight.prices[flight.prices.length - 1].price - lowestPriceItem.price 
     : 0;
+
+  const isFlightFavorite = isFavorite('flight', flight.id);
+
+  const handleFavoriteClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const outboundLeg = flight.outbound[0];
+    await toggleFavorite('flight', flight.id, {
+      title: `${outboundLeg?.departure} → ${outboundLeg?.arrival}`,
+      airlines: flight.airlines,
+      price: flight.lowestPrice,
+      stops: flight.stops,
+      duration: flight.totalDuration,
+      departureTime: outboundLeg?.departureTime,
+    });
+  };
 
   return (
     <motion.div
@@ -48,13 +70,29 @@ const FlightCard = ({ flight }: FlightCardProps) => {
         <CardContent className="p-0">
           <div className="flex flex-col lg:flex-row">
             {/* Flight Details */}
-            <div className="flex-1 p-6">
+            <div className="flex-1 p-6 relative">
+              {/* Favorite Button */}
+              <button 
+                onClick={handleFavoriteClick}
+                className={`absolute top-4 right-4 p-2 rounded-full backdrop-blur-sm transition-colors z-10 ${
+                  isFlightFavorite 
+                    ? 'bg-red-500 hover:bg-red-600' 
+                    : 'bg-muted hover:bg-muted/80'
+                }`}
+              >
+                <Heart 
+                  className={`h-4 w-4 transition-colors ${
+                    isFlightFavorite ? 'text-white fill-white' : 'text-foreground'
+                  }`} 
+                />
+              </button>
+
               {/* Outbound */}
               <div className="mb-4">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="text-xl">{flight.outbound[0]?.airlineLogo}</span>
                   <span className="font-medium">{flight.airlines.join(', ')}</span>
-                  <Badge variant={flight.stops === 0 ? 'default' : 'secondary'} className="ml-auto">
+                  <Badge variant={flight.stops === 0 ? 'default' : 'secondary'} className="ml-auto mr-10">
                     {flight.stops === 0 ? 'Direct' : `${flight.stops} stop${flight.stops > 1 ? 's' : ''}`}
                   </Badge>
                 </div>
@@ -104,7 +142,7 @@ const FlightCard = ({ flight }: FlightCardProps) => {
                   per person • {lowestPriceItem.cabinClass}
                 </div>
                 {savings > 0 && (
-                  <Badge variant="secondary" className="mt-2 bg-green-100 text-green-700">
+                  <Badge variant="secondary" className="mt-2 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
                     Save ${savings} vs other sites
                   </Badge>
                 )}
@@ -122,13 +160,13 @@ const FlightCard = ({ flight }: FlightCardProps) => {
                 <div className="text-xs font-medium text-muted-foreground mb-2">
                   Compare prices
                 </div>
-              {flight.prices.slice(0, 4).map((price, idx) => (
-                <div
-                  key={idx}
-                  className={`flex items-center justify-between p-2 rounded-lg text-sm ${
-                    idx === 0 ? 'bg-primary/10 border border-primary/20' : 'bg-muted'
-                  }`}
-                >
+                {flight.prices.slice(0, 4).map((price, idx) => (
+                  <div
+                    key={idx}
+                    className={`flex items-center justify-between p-2 rounded-lg text-sm ${
+                      idx === 0 ? 'bg-primary/10 border border-primary/20' : 'bg-muted'
+                    }`}
+                  >
                     <span className={idx === 0 ? 'font-medium' : ''}>
                       {price.platform}
                     </span>
