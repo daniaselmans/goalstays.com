@@ -7,6 +7,7 @@ import TestimonialsSection from '@/components/TestimonialsSection';
 import NewsletterSection from '@/components/NewsletterSection';
 import FAQSection from '@/components/FAQSection';
 import Footer from '@/components/Footer';
+import AppInstallBanner from '@/components/AppInstallBanner';
 
 const Index = () => {
   return (
@@ -20,6 +21,7 @@ const Index = () => {
       <NewsletterSection />
       <FAQSection />
       <Footer />
+      <AppInstallBanner />
     </div>
   );
 };
