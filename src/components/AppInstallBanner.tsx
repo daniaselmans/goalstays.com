@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Smartphone, X, Download, Zap, Wifi } from 'lucide-react';
+import { Smartphone, X, Download, Zap, Wifi, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
@@ -53,57 +53,110 @@ const AppInstallBanner = () => {
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
           className="fixed bottom-0 left-0 right-0 z-50 p-4 md:hidden"
         >
-          <div className="relative bg-gradient-to-r from-primary to-accent rounded-2xl p-4 shadow-2xl">
-            {/* Dismiss button */}
-            <button
-              onClick={handleDismiss}
-              className="absolute top-2 right-2 p-1 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
-              aria-label="Dismiss"
-            >
-              <X className="w-4 h-4 text-white" />
-            </button>
+          <div className="relative overflow-hidden rounded-2xl shadow-2xl">
+            {/* Gradient background */}
+            <div className="absolute inset-0 bg-gradient-to-r from-primary via-accent to-primary bg-[length:200%_100%] animate-gradient" />
+            
+            {/* Overlay pattern */}
+            <div 
+              className="absolute inset-0 opacity-10"
+              style={{
+                backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
+                backgroundSize: '16px 16px',
+              }}
+            />
 
-            <div className="flex items-start gap-4">
-              {/* App icon */}
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.2, type: "spring" }}
-                className="flex-shrink-0 w-14 h-14 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center"
+            {/* Content */}
+            <div className="relative p-4">
+              {/* Dismiss button */}
+              <motion.button
+                onClick={handleDismiss}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                className="absolute top-2 right-2 p-1.5 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+                aria-label="Dismiss"
               >
-                <Smartphone className="w-7 h-7 text-white" />
-              </motion.div>
+                <X className="w-4 h-4 text-white" />
+              </motion.button>
 
-              {/* Content */}
-              <div className="flex-1 min-w-0">
-                <h3 className="text-white font-bold text-lg leading-tight">
-                  Get the GoalStays App
-                </h3>
-                <div className="flex flex-wrap gap-2 mt-1 mb-3">
-                  <span className="inline-flex items-center gap-1 text-xs text-white/80">
-                    <Zap className="w-3 h-3" /> Faster
-                  </span>
-                  <span className="inline-flex items-center gap-1 text-xs text-white/80">
-                    <Wifi className="w-3 h-3" /> Works offline
-                  </span>
-                  <span className="inline-flex items-center gap-1 text-xs text-white/80">
-                    <Download className="w-3 h-3" /> No app store
-                  </span>
-                </div>
-
-                <Button
-                  onClick={handleInstall}
-                  size="sm"
-                  className="bg-white text-primary hover:bg-white/90 font-semibold rounded-full px-6"
+              <div className="flex items-start gap-4">
+                {/* App icon */}
+                <motion.div
+                  initial={{ scale: 0, rotate: -180 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                  className="flex-shrink-0 w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center relative"
                 >
-                  Install Free
-                </Button>
+                  <motion.div
+                    animate={{ rotate: [0, 10, -10, 0] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                  >
+                    <Smartphone className="w-8 h-8 text-white" />
+                  </motion.div>
+                  {/* Notification badge */}
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.5, type: "spring" }}
+                    className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-white flex items-center justify-center"
+                  >
+                    <Star className="w-3 h-3 text-primary fill-current" />
+                  </motion.div>
+                </motion.div>
+
+                {/* Content */}
+                <div className="flex-1 min-w-0">
+                  <motion.h3 
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className="text-white font-bold text-lg leading-tight"
+                  >
+                    Get the GoalStays App
+                  </motion.h3>
+                  
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    className="flex flex-wrap gap-3 mt-2 mb-3"
+                  >
+                    {[
+                      { icon: Zap, text: "Faster" },
+                      { icon: Wifi, text: "Offline" },
+                      { icon: Download, text: "Free" },
+                    ].map((item, i) => (
+                      <motion.span 
+                        key={item.text}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5 + i * 0.1 }}
+                        className="inline-flex items-center gap-1 text-xs text-white/90 bg-white/10 px-2 py-1 rounded-full"
+                      >
+                        <item.icon className="w-3 h-3" />
+                        {item.text}
+                      </motion.span>
+                    ))}
+                  </motion.div>
+
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6 }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Button
+                      onClick={handleInstall}
+                      size="sm"
+                      className="bg-white text-primary hover:bg-white/90 font-bold rounded-full px-6 shadow-lg"
+                    >
+                      Install Now
+                    </Button>
+                  </motion.div>
+                </div>
               </div>
             </div>
-
-            {/* Decorative elements */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full blur-xl pointer-events-none" />
           </div>
         </motion.div>
       )}
