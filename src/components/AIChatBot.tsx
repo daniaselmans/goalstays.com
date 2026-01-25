@@ -9,6 +9,13 @@ type Message = { role: 'user' | 'assistant'; content: string };
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
 
+const SUGGESTED_PROMPTS = [
+  { label: '✈️ Best time to book?', prompt: 'When is the best time to book flights for the cheapest prices?' },
+  { label: '🔔 How do price alerts work?', prompt: 'How do price alerts work on GoalStays?' },
+  { label: '🏨 Hotel booking tips', prompt: 'What are your top tips for finding the best hotel deals?' },
+  { label: '🚗 Car rental advice', prompt: 'What should I know before renting a car for a trip?' },
+];
+
 export function AIChatBot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -83,10 +90,11 @@ export function AIChatBot() {
     }
   }, []);
 
-  const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
+  const handleSend = async (messageText?: string) => {
+    const text = messageText || input.trim();
+    if (!text || isLoading) return;
 
-    const userMsg: Message = { role: 'user', content: input.trim() };
+    const userMsg: Message = { role: 'user', content: text };
     const newMessages = [...messages, userMsg];
     setMessages(newMessages);
     setInput('');
@@ -103,6 +111,10 @@ export function AIChatBot() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handlePromptClick = (prompt: string) => {
+    handleSend(prompt);
   };
 
   return (
@@ -157,10 +169,24 @@ export function AIChatBot() {
             {/* Messages */}
             <ScrollArea className="flex-1 p-4" ref={scrollRef}>
               {messages.length === 0 ? (
-                <div className="text-center text-muted-foreground py-8">
-                  <Bot className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                  <p className="text-sm">Hi! I'm your travel assistant.</p>
-                  <p className="text-sm">Ask me anything about hotels, flights, or trips! ✈️</p>
+                <div className="text-center py-4">
+                  <Bot className="h-10 w-10 mx-auto mb-3 text-muted-foreground/50" />
+                  <p className="text-sm text-muted-foreground mb-1">Hi! I'm your travel assistant.</p>
+                  <p className="text-sm text-muted-foreground mb-4">Ask me anything about hotels, flights, or trips! ✈️</p>
+                  
+                  <div className="space-y-2 text-left">
+                    <p className="text-xs text-muted-foreground font-medium px-1">Try asking:</p>
+                    {SUGGESTED_PROMPTS.map((item, i) => (
+                      <button
+                        key={i}
+                        onClick={() => handlePromptClick(item.prompt)}
+                        disabled={isLoading}
+                        className="w-full text-left px-3 py-2 text-sm bg-muted/50 hover:bg-muted rounded-lg transition-colors disabled:opacity-50"
+                      >
+                        {item.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               ) : (
                 <div className="space-y-4">
