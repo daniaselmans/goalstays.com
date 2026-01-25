@@ -3,15 +3,36 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Hotel } from '@/lib/api/hotels';
+import { useFavorites } from '@/hooks/useFavorites';
+import { useAuthContext } from '@/contexts/AuthContext';
 
 interface HotelCardProps {
   hotel: Hotel;
 }
 
 const HotelCard = ({ hotel }: HotelCardProps) => {
+  const { user } = useAuthContext();
+  const { isFavorite, toggleFavorite } = useFavorites();
+  
   const lowestPricePlatform = hotel.prices.reduce((prev, current) =>
     prev.price < current.price ? prev : current
   );
+
+  const isHotelFavorite = isFavorite('hotel', hotel.id);
+
+  const handleFavoriteClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    await toggleFavorite('hotel', hotel.id, {
+      name: hotel.name,
+      location: hotel.location,
+      price: hotel.lowestPrice,
+      image: hotel.image,
+      rating: hotel.rating,
+      stars: hotel.stars,
+    });
+  };
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 group">
@@ -38,8 +59,19 @@ const HotelCard = ({ hotel }: HotelCardProps) => {
           </div>
 
           {/* Favorite */}
-          <button className="absolute top-3 right-3 p-2 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background transition-colors">
-            <Heart className="h-4 w-4 text-foreground" />
+          <button 
+            onClick={handleFavoriteClick}
+            className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-sm transition-colors ${
+              isHotelFavorite 
+                ? 'bg-red-500 hover:bg-red-600' 
+                : 'bg-background/80 hover:bg-background'
+            }`}
+          >
+            <Heart 
+              className={`h-4 w-4 transition-colors ${
+                isHotelFavorite ? 'text-white fill-white' : 'text-foreground'
+              }`} 
+            />
           </button>
         </div>
 

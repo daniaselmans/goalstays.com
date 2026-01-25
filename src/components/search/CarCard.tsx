@@ -1,14 +1,19 @@
 import { motion } from 'framer-motion';
-import { Users, Cog, Fuel, Check, ExternalLink } from 'lucide-react';
+import { Users, Cog, Fuel, Check, ExternalLink, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CarResult, PlatformPrice } from '@/lib/api/cars';
+import { useFavorites } from '@/hooks/useFavorites';
+import { useAuthContext } from '@/contexts/AuthContext';
 
 interface CarCardProps {
   car: CarResult;
 }
 
 const CarCard = ({ car }: CarCardProps) => {
+  const { user } = useAuthContext();
+  const { isFavorite, toggleFavorite } = useFavorites();
+
   const lowestPlatform = car.prices.reduce((prev, curr) =>
     prev.price < curr.price ? prev : curr
   );
@@ -16,6 +21,23 @@ const CarCard = ({ car }: CarCardProps) => {
   const savings = car.prices.length > 1
     ? Math.max(...car.prices.map(p => p.price)) - lowestPlatform.price
     : 0;
+
+  const isCarFavorite = isFavorite('car', car.id);
+
+  const handleFavoriteClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    await toggleFavorite('car', car.id, {
+      name: car.name,
+      category: car.category,
+      price: car.lowestPrice,
+      image: car.image,
+      supplier: car.supplier,
+      seats: car.seats,
+      transmission: car.transmission,
+    });
+  };
 
   return (
     <motion.div
@@ -34,10 +56,26 @@ const CarCard = ({ car }: CarCardProps) => {
             {car.category}
           </Badge>
           {savings > 0 && (
-            <Badge className="absolute top-3 right-3 bg-green-500 text-white">
+            <Badge className="absolute top-10 left-3 bg-green-500 text-white">
               Save ${savings.toFixed(0)}/day
             </Badge>
           )}
+          
+          {/* Favorite Button */}
+          <button 
+            onClick={handleFavoriteClick}
+            className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-sm transition-colors ${
+              isCarFavorite 
+                ? 'bg-red-500 hover:bg-red-600' 
+                : 'bg-background/80 hover:bg-background'
+            }`}
+          >
+            <Heart 
+              className={`h-4 w-4 transition-colors ${
+                isCarFavorite ? 'text-white fill-white' : 'text-foreground'
+              }`} 
+            />
+          </button>
         </div>
 
         {/* Car Details */}
