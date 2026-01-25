@@ -1,4 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { Resend } from 'resend';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -34,7 +35,6 @@ async function checkHotelPrice(params: Record<string, unknown>, supabaseUrl: str
     
     const data = await response.json();
     if (data.hotels && data.hotels.length > 0) {
-      // Find the hotel by name or get the lowest price
       const prices = data.hotels.map((h: SearchResult) => h.lowestPrice || h.price || 0).filter((p: number) => p > 0);
       return prices.length > 0 ? Math.min(...prices) : null;
     }
@@ -112,6 +112,136 @@ async function checkPrice(alert: PriceAlert, supabaseUrl: string): Promise<numbe
   }
 }
 
+function getTypeEmoji(type: string): string {
+  switch (type) {
+    case 'hotel': return '🏨';
+    case 'flight': return '✈️';
+    case 'car': return '🚗';
+    default: return '💰';
+  }
+}
+
+function generateEmailHtml(alert: PriceAlert, currentPrice: number, appUrl: string): string {
+  const typeEmoji = getTypeEmoji(alert.search_type);
+  const savings = alert.target_price - currentPrice;
+  
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Price Drop Alert!</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f4f4f5;">
+  <table role="presentation" style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td align="center" style="padding: 40px 20px;">
+        <table role="presentation" style="max-width: 600px; width: 100%; border-collapse: collapse; background-color: #ffffff; border-radius: 16px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+          <!-- Header -->
+          <tr>
+            <td style="padding: 40px 40px 20px; text-align: center; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 16px 16px 0 0;">
+              <div style="font-size: 48px; margin-bottom: 16px;">${typeEmoji}</div>
+              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">Price Drop Alert!</h1>
+              <p style="margin: 8px 0 0; color: rgba(255,255,255,0.9); font-size: 16px;">Great news! The price just dropped below your target</p>
+            </td>
+          </tr>
+          
+          <!-- Content -->
+          <tr>
+            <td style="padding: 40px;">
+              <h2 style="margin: 0 0 24px; color: #18181b; font-size: 20px; font-weight: 600;">${alert.item_name}</h2>
+              
+              <!-- Price Comparison -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
+                <tr>
+                  <td style="padding: 20px; background-color: #f4f4f5; border-radius: 12px;">
+                    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                      <tr>
+                        <td style="text-align: center; padding: 0 10px;">
+                          <p style="margin: 0 0 4px; color: #71717a; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Your Target</p>
+                          <p style="margin: 0; color: #18181b; font-size: 24px; font-weight: 700;">$${alert.target_price}</p>
+                        </td>
+                        <td style="text-align: center; padding: 0 10px;">
+                          <div style="font-size: 24px;">→</div>
+                        </td>
+                        <td style="text-align: center; padding: 0 10px;">
+                          <p style="margin: 0 0 4px; color: #71717a; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Current Price</p>
+                          <p style="margin: 0; color: #10b981; font-size: 24px; font-weight: 700;">$${currentPrice}</p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+              
+              ${savings > 0 ? `
+              <p style="margin: 0 0 24px; padding: 16px; background-color: #ecfdf5; border-radius: 8px; color: #059669; font-size: 16px; text-align: center; font-weight: 500;">
+                🎉 You're saving $${savings.toFixed(2)} below your target!
+              </p>
+              ` : ''}
+              
+              <!-- CTA Button -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                <tr>
+                  <td align="center">
+                    <a href="${appUrl}/alerts" style="display: inline-block; padding: 16px 32px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; text-decoration: none; font-size: 16px; font-weight: 600; border-radius: 8px;">
+                      View Your Alerts
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 24px 40px; border-top: 1px solid #e4e4e7; text-align: center;">
+              <p style="margin: 0 0 8px; color: #71717a; font-size: 14px;">
+                You received this email because you set a price alert on GoalStays.
+              </p>
+              <p style="margin: 0; color: #a1a1aa; font-size: 12px;">
+                To stop receiving these alerts, deactivate them in your account settings.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `;
+}
+
+async function sendPriceDropEmail(
+  resend: Resend,
+  userEmail: string,
+  alert: PriceAlert,
+  currentPrice: number,
+  appUrl: string
+): Promise<boolean> {
+  try {
+    const { error } = await resend.emails.send({
+      from: 'GoalStays Alerts <onboarding@resend.dev>',
+      to: [userEmail],
+      subject: `🎉 Price Drop! ${alert.item_name} is now $${currentPrice}`,
+      html: generateEmailHtml(alert, currentPrice, appUrl),
+    });
+
+    if (error) {
+      console.error('Resend error:', error);
+      return false;
+    }
+    
+    console.log(`Email sent successfully to ${userEmail} for alert ${alert.id}`);
+    return true;
+  } catch (error) {
+    console.error('Error sending email:', error);
+    return false;
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -120,8 +250,15 @@ Deno.serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const resendApiKey = Deno.env.get('RESEND_API_KEY');
+    const appUrl = 'https://goalstayscom.lovable.app';
     
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const resend = resendApiKey ? new Resend(resendApiKey) : null;
+
+    if (!resend) {
+      console.warn('RESEND_API_KEY not configured - email notifications will be skipped');
+    }
 
     // Fetch all active price alerts
     const { data: alerts, error: alertsError } = await supabase
@@ -146,6 +283,7 @@ Deno.serve(async (req) => {
     console.log(`Checking ${alerts.length} active price alerts...`);
 
     let notificationsCreated = 0;
+    let emailsSent = 0;
     let alertsChecked = 0;
 
     for (const alert of alerts as PriceAlert[]) {
@@ -172,7 +310,7 @@ Deno.serve(async (req) => {
         if (currentPrice <= alert.target_price) {
           console.log(`Price alert triggered for ${alert.item_name}: $${currentPrice} <= $${alert.target_price}`);
 
-          // Create notification
+          // Create in-app notification
           const { error: notifError } = await supabase
             .from('notifications')
             .insert({
@@ -189,12 +327,27 @@ Deno.serve(async (req) => {
             notificationsCreated++;
           }
 
+          // Send email notification if Resend is configured
+          if (resend) {
+            // Fetch user email from auth.users
+            const { data: userData, error: userError } = await supabase.auth.admin.getUserById(alert.user_id);
+            
+            if (userError || !userData?.user?.email) {
+              console.error('Error fetching user email:', userError || 'No email found');
+            } else {
+              const emailSent = await sendPriceDropEmail(resend, userData.user.email, alert, currentPrice, appUrl);
+              if (emailSent) {
+                emailsSent++;
+              }
+            }
+          }
+
           // Mark alert as triggered
           await supabase
             .from('price_alerts')
             .update({
               triggered_at: new Date().toISOString(),
-              is_active: false, // Deactivate after triggering
+              is_active: false,
             })
             .eq('id', alert.id);
         }
@@ -209,6 +362,7 @@ Deno.serve(async (req) => {
         totalAlerts: alerts.length,
         alertsChecked,
         notificationsCreated,
+        emailsSent,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
