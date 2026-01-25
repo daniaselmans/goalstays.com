@@ -11,10 +11,12 @@ import { searchFlights, FlightResult } from '@/lib/api/flights';
 import { useToast } from '@/hooks/use-toast';
 import { FlightSearchFilters, defaultFlightFilters } from '@/types/flightFilters';
 import { useFlightFilters } from '@/hooks/useFlightFilters';
+import { useSearchHistory } from '@/hooks/useSearchHistory';
 
 const FlightSearchResults = () => {
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
+  const { addSearchHistory } = useSearchHistory();
 
   const [flights, setFlights] = useState<FlightResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -69,6 +71,16 @@ const FlightSearchResults = () => {
             passengers: params.passengers,
             tripType: params.tripType,
             total: response.meta?.total || response.flights.length,
+          });
+
+          // Save search to history
+          addSearchHistory('flight', {
+            origin: params.origin,
+            destination: params.destination,
+            departDate: params.departDate,
+            returnDate: params.returnDate,
+            passengers: params.passengers,
+            tripType: params.tripType,
           });
 
           if (response.flights.length === 0) {

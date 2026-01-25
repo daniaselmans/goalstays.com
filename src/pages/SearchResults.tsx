@@ -11,10 +11,12 @@ import { searchHotels, Hotel } from '@/lib/api/hotels';
 import { useToast } from '@/hooks/use-toast';
 import { SearchFilters as SearchFiltersType, defaultFilters } from '@/types/filters';
 import { useHotelFilters } from '@/hooks/useHotelFilters';
+import { useSearchHistory } from '@/hooks/useSearchHistory';
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
+  const { addSearchHistory } = useSearchHistory();
   
   const [hotels, setHotels] = useState<Hotel[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -55,6 +57,14 @@ const SearchResults = () => {
           total: response.meta?.total || response.hotels.length,
           sources: response.meta?.sources,
         });
+
+        // Save search to history
+        addSearchHistory('hotel', {
+          city: params.city,
+          checkIn: params.checkIn,
+          checkOut: params.checkOut,
+          guests: params.guests,
+        });
         
         if (response.hotels.length === 0) {
           toast({
@@ -86,7 +96,7 @@ const SearchResults = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [toast]);
+  }, [toast, addSearchHistory]);
 
   // Apply filters
   const filteredHotels = useHotelFilters(hotels, filters);
