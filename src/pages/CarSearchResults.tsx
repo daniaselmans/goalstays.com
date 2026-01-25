@@ -27,6 +27,7 @@ const CarSearchResults = () => {
     pickupDate: string;
     dropoffDate: string;
     total: number;
+    tripType: 'roundtrip' | 'oneway';
     sources?: { rentalcars: number; kayak: number };
   } | null>(null);
 
@@ -37,6 +38,7 @@ const CarSearchResults = () => {
       pickupDate: string;
       dropoffDate: string;
       driverAge: number;
+      tripType: 'roundtrip' | 'oneway';
     }) => {
       setIsLoading(true);
       setError(null);
@@ -58,6 +60,7 @@ const CarSearchResults = () => {
             pickupDate: params.pickupDate,
             dropoffDate: params.dropoffDate,
             total: response.meta?.total || response.cars.length,
+            tripType: params.tripType,
             sources: response.meta?.sources,
           });
 
@@ -135,6 +138,12 @@ const CarSearchResults = () => {
               <div>
                 <h1 className="text-2xl font-bold text-foreground">
                   {searchMeta?.pickupLocation || 'Car Rentals'}
+                  {searchMeta?.tripType === 'oneway' && searchMeta?.dropoffLocation && 
+                    searchMeta.dropoffLocation !== searchMeta.pickupLocation && (
+                    <span className="text-lg font-normal text-muted-foreground">
+                      {' → '}{searchMeta.dropoffLocation}
+                    </span>
+                  )}
                 </h1>
                 <p className="text-muted-foreground">
                   {isLoading ? (
@@ -143,6 +152,11 @@ const CarSearchResults = () => {
                     <>
                       {filteredCars.length} of {cars.length} vehicles •{' '}
                       {formatDateRange()}
+                      {searchMeta.tripType === 'oneway' && (
+                        <span className="ml-2 text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                          One-way
+                        </span>
+                      )}
                       {searchMeta.sources && (
                         <span className="block text-xs mt-1">
                           Sources: RentalCars ({searchMeta.sources.rentalcars}),
@@ -209,6 +223,7 @@ const CarSearchResults = () => {
                           'yyyy-MM-dd'
                         ),
                       driverAge: 30,
+                      tripType: searchMeta?.tripType || 'roundtrip',
                     })
                   }
                 >
