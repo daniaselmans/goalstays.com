@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Heart, History, LogOut, Settings } from 'lucide-react';
+import { User, Heart, History, LogOut, Settings, Bell } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -48,6 +48,10 @@ const UserMenu = () => {
         <DropdownMenuItem onClick={() => navigate('/favorites')}>
           <Heart className="mr-2 h-4 w-4" />
           My Favorites
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigate('/alerts')}>
+          <Bell className="mr-2 h-4 w-4" />
+          Price Alerts
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => navigate('/history')}>
           <History className="mr-2 h-4 w-4" />

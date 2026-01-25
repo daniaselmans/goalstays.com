@@ -1,16 +1,18 @@
 import { motion } from 'framer-motion';
-import { Users, Cog, Fuel, Check, ExternalLink, Heart } from 'lucide-react';
+import { Users, Cog, Fuel, Check, ExternalLink, Heart, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CarResult, PlatformPrice } from '@/lib/api/cars';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useAuthContext } from '@/contexts/AuthContext';
+import PriceAlertDialog from '@/components/PriceAlertDialog';
 
 interface CarCardProps {
   car: CarResult;
+  searchParams?: Record<string, unknown>;
 }
 
-const CarCard = ({ car }: CarCardProps) => {
+const CarCard = ({ car, searchParams }: CarCardProps) => {
   const { user } = useAuthContext();
   const { isFavorite, toggleFavorite } = useFavorites();
 
@@ -146,13 +148,26 @@ const CarCard = ({ car }: CarCardProps) => {
                 />
               ))}
           </div>
-          <Button
-            className="w-full mt-4"
-            onClick={() => window.open(lowestPlatform.url, '_blank')}
-          >
-            Book from ${lowestPlatform.price}/day
-            <ExternalLink className="ml-2 h-4 w-4" />
-          </Button>
+          <div className="flex gap-2 mt-4">
+            <PriceAlertDialog
+              searchType="car"
+              searchParams={searchParams || { carId: car.id }}
+              currentPrice={lowestPlatform.price}
+              itemName={car.name}
+              trigger={
+                <Button variant="outline" size="icon">
+                  <Bell className="h-4 w-4" />
+                </Button>
+              }
+            />
+            <Button
+              className="flex-1"
+              onClick={() => window.open(lowestPlatform.url, '_blank')}
+            >
+              Book from ${lowestPlatform.price}/day
+              <ExternalLink className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </div>
     </motion.div>

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useAuthContext } from '@/contexts/AuthContext';
 import AuthModal from '@/components/auth/AuthModal';
 import UserMenu from '@/components/auth/UserMenu';
+import NotificationsDropdown from '@/components/NotificationsDropdown';
 
 const Header = () => {
   const { user, loading } = useAuthContext();
@@ -54,7 +55,10 @@ const Header = () => {
               {loading ? (
                 <div className="w-24 h-9 bg-primary-foreground/10 animate-pulse rounded-lg" />
               ) : user ? (
-                <UserMenu />
+                <>
+                  <NotificationsDropdown />
+                  <UserMenu />
+                </>
               ) : (
                 <>
                   <Button variant="glass" size="sm" onClick={openSignIn}>

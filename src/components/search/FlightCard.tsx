@@ -1,14 +1,16 @@
 import { motion } from 'framer-motion';
-import { Plane, Clock, ExternalLink, Heart } from 'lucide-react';
+import { Plane, Clock, ExternalLink, Heart, Bell } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { FlightResult, FlightLeg } from '@/lib/api/flights';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useAuthContext } from '@/contexts/AuthContext';
+import PriceAlertDialog from '@/components/PriceAlertDialog';
 
 interface FlightCardProps {
   flight: FlightResult;
+  searchParams?: Record<string, unknown>;
 }
 
 const LegDisplay = ({ leg, isLast }: { leg: FlightLeg; isLast: boolean }) => (
@@ -35,7 +37,7 @@ const LegDisplay = ({ leg, isLast }: { leg: FlightLeg; isLast: boolean }) => (
   </div>
 );
 
-const FlightCard = ({ flight }: FlightCardProps) => {
+const FlightCard = ({ flight, searchParams }: FlightCardProps) => {
   const { user } = useAuthContext();
   const { isFavorite, toggleFavorite } = useFavorites();
   
@@ -148,12 +150,25 @@ const FlightCard = ({ flight }: FlightCardProps) => {
                 )}
               </div>
 
-              <Button className="w-full mb-4" asChild>
-                <a href={lowestPriceItem.url} target="_blank" rel="noopener noreferrer">
-                  Book on {lowestPriceItem.platform}
-                  <ExternalLink className="ml-2 h-4 w-4" />
-                </a>
-              </Button>
+              <div className="flex gap-2">
+                <PriceAlertDialog
+                  searchType="flight"
+                  searchParams={searchParams || { flightId: flight.id }}
+                  currentPrice={lowestPriceItem.price}
+                  itemName={`${flight.outbound[0]?.departure} → ${flight.outbound[0]?.arrival}`}
+                  trigger={
+                    <Button variant="outline" size="icon">
+                      <Bell className="h-4 w-4" />
+                    </Button>
+                  }
+                />
+                <Button className="flex-1" asChild>
+                  <a href={lowestPriceItem.url} target="_blank" rel="noopener noreferrer">
+                    Book on {lowestPriceItem.platform}
+                    <ExternalLink className="ml-2 h-4 w-4" />
+                  </a>
+                </Button>
+              </div>
 
               {/* Price Comparison */}
               <div className="space-y-2">
