@@ -5,37 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <!-- Primary Meta Tags -->
-    <title>GoalStay - Compare Hotel Prices from Booking, Airbnb, Hotels.com & Trivago</title>
-    <meta name="title" content="GoalStay - Compare Hotel Prices from Booking, Airbnb, Hotels.com & Trivago" />
-    <meta name="description" content="Find the best hotel deals in seconds. GoalStay compares prices from Booking.com, Hotels.com, Airbnb, Trivago and more to save you time and money on your next trip." />
+    <title>GoalStay - Compare Hotels, Flights & Car Rentals | Best Travel Deals</title>
+    <meta name="title" content="GoalStay - Compare Hotels, Flights & Car Rentals | Best Travel Deals" />
+    <meta name="description" content="Find the best travel deals in seconds. GoalStay compares prices from Booking.com, Airbnb, Skyscanner, RentalCars and 50+ sites. Set price alerts and save up to 60% on your next trip." />
     <meta name="author" content="GoalStay" />
-    <meta name="keywords" content="hotel comparison, cheap hotels, booking, airbnb, hotels.com, trivago, travel deals, accommodation, vacation rentals, best hotel prices" />
+    <meta name="keywords" content="hotel comparison, cheap flights, car rental deals, booking, airbnb, skyscanner, hotels.com, trivago, travel deals, accommodation, vacation rentals, best hotel prices, flight comparison, rental cars" />
     <meta name="robots" content="index, follow" />
     
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://goalstay.com" />
+    <link rel="canonical" href="https://goalstayscom.lovable.app" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://goalstay.com" />
-    <meta property="og:title" content="GoalStay - Compare Hotel Prices from All Major Platforms" />
-    <meta property="og:description" content="Find the best hotel deals in seconds. Compare prices from Booking.com, Hotels.com, Airbnb, Trivago and more." />
-    <meta property="og:image" content="https://goalstay.com/og-image.png" />
+    <meta property="og:url" content="https://goalstayscom.lovable.app" />
+    <meta property="og:title" content="GoalStay - Compare Hotels, Flights & Car Rentals" />
+    <meta property="og:description" content="Find the best travel deals in seconds. Compare prices from 50+ sites and save up to 60% on hotels, flights & car rentals." />
+    <meta property="og:image" content="https://goalstayscom.lovable.app/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="GoalStay - Your travel companion for finding the best deals on hotels, flights and car rentals" />
     <meta property="og:site_name" content="GoalStay" />
     <meta property="og:locale" content="en_US" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://goalstay.com" />
-    <meta name="twitter:title" content="GoalStay - Compare Hotel Prices from All Major Platforms" />
-    <meta name="twitter:description" content="Find the best hotel deals in seconds. Compare prices from Booking.com, Hotels.com, Airbnb, Trivago and more." />
-    <meta name="twitter:image" content="https://goalstay.com/og-image.png" />
+    <meta name="twitter:url" content="https://goalstayscom.lovable.app" />
+    <meta name="twitter:title" content="GoalStay - Compare Hotels, Flights & Car Rentals" />
+    <meta name="twitter:description" content="Find the best travel deals in seconds. Compare prices from 50+ sites and save up to 60%." />
+    <meta name="twitter:image" content="https://goalstayscom.lovable.app/og-image.jpg" />
+    <meta name="twitter:image:alt" content="GoalStay - Travel deals comparison" />
     <meta name="twitter:site" content="@GoalStay" />
     <meta name="twitter:creator" content="@GoalStay" />
 
+    <!-- Additional SEO -->
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="geo.region" content="US" />
+    <meta name="rating" content="general" />
+    <meta name="referrer" content="origin-when-cross-origin" />
+
     <!-- Theme Color -->
-    <meta name="theme-color" content="#0066cc" />
-    <meta name="msapplication-TileColor" content="#0066cc" />
+    <meta name="theme-color" content="#0891b2" />
+    <meta name="msapplication-TileColor" content="#0891b2" />
 
     <!-- Favicon & Icons -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
@@ -55,11 +65,15 @@
         "@context": "https://schema.org",
         "@type": "WebSite",
         "name": "GoalStay",
-        "url": "https://goalstay.com",
-        "description": "Compare hotel prices from Booking.com, Hotels.com, Airbnb, Trivago and more.",
+        "alternateName": "GoalStay Travel",
+        "url": "https://goalstayscom.lovable.app",
+        "description": "Compare hotel, flight and car rental prices from 50+ travel sites. Find the best deals and set price alerts.",
         "potentialAction": {
           "@type": "SearchAction",
-          "target": "https://goalstay.com/search?q={search_term_string}",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://goalstayscom.lovable.app/search?q={search_term_string}"
+          },
           "query-input": "required name=search_term_string"
         }
       }
@@ -69,8 +83,9 @@
         "@context": "https://schema.org",
         "@type": "Organization",
         "name": "GoalStay",
-        "url": "https://goalstay.com",
-        "logo": "https://goalstay.com/logo.png",
+        "url": "https://goalstayscom.lovable.app",
+        "logo": "https://goalstayscom.lovable.app/icon-512.png",
+        "description": "GoalStay helps travelers find the best deals by comparing prices across hotels, flights, and car rentals from 50+ booking sites.",
         "sameAs": [
           "https://twitter.com/GoalStay",
           "https://facebook.com/GoalStay",
@@ -80,6 +95,25 @@
           "@type": "ContactPoint",
           "contactType": "customer service",
           "availableLanguage": "English"
+        }
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "GoalStay",
+        "applicationCategory": "TravelApplication",
+        "operatingSystem": "Web, iOS, Android",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.8",
+          "ratingCount": "2500"
         }
       }
     </script>
