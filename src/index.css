@@ -147,8 +147,34 @@
     animation: float 6s ease-in-out infinite;
   }
 
+  .animate-float-delayed {
+    animation: float 6s ease-in-out infinite 2s;
+  }
+
+  .animate-float-slow {
+    animation: float 8s ease-in-out infinite;
+  }
+
   .animate-pulse-subtle {
     animation: pulse-subtle 3s ease-in-out infinite;
+  }
+
+  .animate-shimmer {
+    animation: shimmer 3s linear infinite;
+    background-size: 200% 100%;
+  }
+
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+
+  .animate-spin-slow {
+    animation: spin 20s linear infinite;
+  }
+
+  .animate-gradient {
+    animation: gradient-shift 8s ease infinite;
+    background-size: 200% 200%;
   }
 
   @keyframes float {
@@ -159,5 +185,67 @@
   @keyframes pulse-subtle {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.8; }
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  @keyframes glow {
+    0% { box-shadow: 0 0 20px -5px hsl(210 100% 45% / 0.3); }
+    100% { box-shadow: 0 0 40px -5px hsl(210 100% 45% / 0.6); }
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  /* Particle effect base */
+  .particle {
+    @apply absolute rounded-full bg-primary/20 pointer-events-none;
+  }
+
+  /* Glass morphism enhanced */
+  .glass-morphism {
+    @apply bg-white/10 backdrop-blur-xl border border-white/20;
+    box-shadow: 
+      0 8px 32px 0 rgba(31, 38, 135, 0.15),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  }
+
+  /* Hover lift effect */
+  .hover-lift {
+    @apply transition-all duration-300;
+  }
+  .hover-lift:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px -10px hsl(220 25% 10% / 0.2);
+  }
+
+  /* Gradient border */
+  .gradient-border {
+    position: relative;
+    background: hsl(var(--card));
+    border-radius: var(--radius);
+  }
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: var(--gradient-hero);
+    border-radius: calc(var(--radius) + 2px);
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .gradient-border:hover::before {
+    opacity: 1;
   }
 }
