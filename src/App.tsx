@@ -11,6 +11,7 @@ import FlightSearchResults from "./pages/FlightSearchResults";
 import InstallApp from "./pages/InstallApp";
 import Favorites from "./pages/Favorites";
 import SearchHistory from "./pages/SearchHistory";
+import PriceAlerts from "./pages/PriceAlerts";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
@@ -31,6 +32,7 @@ const App = () => (
             <Route path="/install" element={<InstallApp />} />
             <Route path="/favorites" element={<Favorites />} />
             <Route path="/history" element={<SearchHistory />} />
+            <Route path="/alerts" element={<PriceAlerts />} />
             <Route path="/profile" element={<Profile />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

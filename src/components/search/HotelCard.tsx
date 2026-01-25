@@ -1,16 +1,18 @@
-import { Star, Heart, MapPin, Check, ExternalLink } from 'lucide-react';
+import { Star, Heart, MapPin, Check, ExternalLink, Bell } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Hotel } from '@/lib/api/hotels';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useAuthContext } from '@/contexts/AuthContext';
+import PriceAlertDialog from '@/components/PriceAlertDialog';
 
 interface HotelCardProps {
   hotel: Hotel;
+  searchParams?: Record<string, unknown>;
 }
 
-const HotelCard = ({ hotel }: HotelCardProps) => {
+const HotelCard = ({ hotel, searchParams }: HotelCardProps) => {
   const { user } = useAuthContext();
   const { isFavorite, toggleFavorite } = useFavorites();
   
@@ -186,10 +188,23 @@ const HotelCard = ({ hotel }: HotelCardProps) => {
                 <span className="text-sm font-normal text-muted-foreground"> / night</span>
               </p>
             </div>
-            <Button variant="hero" size="lg">
-              <ExternalLink className="h-4 w-4 mr-2" />
-              View Deal
-            </Button>
+            <div className="flex items-center gap-2">
+              <PriceAlertDialog
+                searchType="hotel"
+                searchParams={searchParams || { hotelId: hotel.id }}
+                currentPrice={hotel.lowestPrice}
+                itemName={hotel.name}
+                trigger={
+                  <Button variant="outline" size="icon">
+                    <Bell className="h-4 w-4" />
+                  </Button>
+                }
+              />
+              <Button variant="hero" size="lg">
+                <ExternalLink className="h-4 w-4 mr-2" />
+                View Deal
+              </Button>
+            </div>
           </div>
         </div>
       </div>
