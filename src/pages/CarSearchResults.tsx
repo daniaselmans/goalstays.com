@@ -11,10 +11,12 @@ import { searchCars, CarResult, CarSearchResponse } from '@/lib/api/cars';
 import { useToast } from '@/hooks/use-toast';
 import { CarSearchFilters, defaultCarFilters } from '@/types/carFilters';
 import { useCarFilters } from '@/hooks/useCarFilters';
+import { useSearchHistory } from '@/hooks/useSearchHistory';
 
 const CarSearchResults = () => {
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
+  const { addSearchHistory } = useSearchHistory();
 
   const [cars, setCars] = useState<CarResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -62,6 +64,16 @@ const CarSearchResults = () => {
             total: response.meta?.total || response.cars.length,
             tripType: params.tripType,
             sources: response.meta?.sources,
+          });
+
+          // Save search to history
+          addSearchHistory('car', {
+            pickupLocation: params.pickupLocation,
+            dropoffLocation: params.dropoffLocation,
+            pickupDate: params.pickupDate,
+            dropoffDate: params.dropoffDate,
+            driverAge: params.driverAge,
+            tripType: params.tripType,
           });
 
           if (response.cars.length === 0) {
