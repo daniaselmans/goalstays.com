@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import SearchResults from "./pages/SearchResults";
 import CarSearchResults from "./pages/CarSearchResults";
+import FlightSearchResults from "./pages/FlightSearchResults";
 import InstallApp from "./pages/InstallApp";
 import Favorites from "./pages/Favorites";
 import SearchHistory from "./pages/SearchHistory";
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/search" element={<SearchResults />} />
             <Route path="/search/cars" element={<CarSearchResults />} />
+            <Route path="/search/flights" element={<FlightSearchResults />} />
             <Route path="/install" element={<InstallApp />} />
             <Route path="/favorites" element={<Favorites />} />
             <Route path="/history" element={<SearchHistory />} />
