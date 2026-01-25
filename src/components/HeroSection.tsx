@@ -37,7 +37,7 @@ const HeroSection = () => {
     if (activeTab === 'hotels') {
       navigate('/search');
     } else if (activeTab === 'flights') {
-      navigate(`/search?tab=flights&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(flightDestination)}`);
+      navigate(`/search/flights?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(flightDestination)}&tripType=roundtrip`);
     } else if (activeTab === 'cars') {
       const dropoff = carTripType === 'oneway' ? dropoffLocation : pickupLocation;
       navigate(`/search/cars?pickup=${encodeURIComponent(pickupLocation)}&dropoff=${encodeURIComponent(dropoff || pickupLocation)}&tripType=${carTripType}`);
