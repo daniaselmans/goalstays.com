@@ -2,10 +2,19 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { MessageCircle, X, Send, Bot, User, Loader2 } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, User, Loader2, History, Plus, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 type Message = { role: 'user' | 'assistant'; content: string };
+
+interface Conversation {
+  id: string;
+  title: string;
+  created_at: string;
+}
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
 
@@ -17,10 +26,15 @@ const SUGGESTED_PROMPTS = [
 ];
 
 export function AIChatBot() {
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
+  const [loadingHistory, setLoadingHistory] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -28,6 +42,112 @@ export function AIChatBot() {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
+
+  const fetchConversations = useCallback(async () => {
+    if (!user) return;
+    setLoadingHistory(true);
+    try {
+      const { data, error } = await supabase
+        .from('chat_conversations')
+        .select('id, title, created_at')
+        .order('updated_at', { ascending: false })
+        .limit(20);
+      
+      if (error) throw error;
+      setConversations(data || []);
+    } catch (error) {
+      console.error('Error fetching conversations:', error);
+    } finally {
+      setLoadingHistory(false);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (isOpen && user && showHistory) {
+      fetchConversations();
+    }
+  }, [isOpen, user, showHistory, fetchConversations]);
+
+  const loadConversation = async (conversationId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('chat_messages')
+        .select('role, content')
+        .eq('conversation_id', conversationId)
+        .order('created_at', { ascending: true });
+      
+      if (error) throw error;
+      
+      setMessages((data || []).map(m => ({ role: m.role as 'user' | 'assistant', content: m.content })));
+      setCurrentConversationId(conversationId);
+      setShowHistory(false);
+    } catch (error) {
+      console.error('Error loading conversation:', error);
+      toast.error('Failed to load conversation');
+    }
+  };
+
+  const deleteConversation = async (conversationId: string) => {
+    try {
+      const { error } = await supabase
+        .from('chat_conversations')
+        .delete()
+        .eq('id', conversationId);
+      
+      if (error) throw error;
+      
+      setConversations(prev => prev.filter(c => c.id !== conversationId));
+      if (currentConversationId === conversationId) {
+        setMessages([]);
+        setCurrentConversationId(null);
+      }
+      toast.success('Conversation deleted');
+    } catch (error) {
+      console.error('Error deleting conversation:', error);
+      toast.error('Failed to delete conversation');
+    }
+  };
+
+  const startNewConversation = () => {
+    setMessages([]);
+    setCurrentConversationId(null);
+    setShowHistory(false);
+  };
+
+  const saveMessage = async (conversationId: string, role: 'user' | 'assistant', content: string) => {
+    if (!user) return;
+    
+    try {
+      await supabase.from('chat_messages').insert({
+        conversation_id: conversationId,
+        role,
+        content,
+      });
+    } catch (error) {
+      console.error('Error saving message:', error);
+    }
+  };
+
+  const createConversation = async (firstMessage: string): Promise<string | null> => {
+    if (!user) return null;
+    
+    try {
+      // Generate title from first message (first 50 chars)
+      const title = firstMessage.length > 50 ? firstMessage.substring(0, 47) + '...' : firstMessage;
+      
+      const { data, error } = await supabase
+        .from('chat_conversations')
+        .insert({ user_id: user.id, title })
+        .select('id')
+        .single();
+      
+      if (error) throw error;
+      return data.id;
+    } catch (error) {
+      console.error('Error creating conversation:', error);
+      return null;
+    }
+  };
 
   const streamChat = useCallback(async (userMessages: Message[]) => {
     const resp = await fetch(CHAT_URL, {
@@ -88,6 +208,8 @@ export function AIChatBot() {
         }
       }
     }
+
+    return assistantContent;
   }, []);
 
   const handleSend = async (messageText?: string) => {
@@ -100,8 +222,28 @@ export function AIChatBot() {
     setInput('');
     setIsLoading(true);
 
+    let convId = currentConversationId;
+
+    // Create new conversation if needed (for authenticated users)
+    if (user && !convId) {
+      convId = await createConversation(text);
+      if (convId) {
+        setCurrentConversationId(convId);
+      }
+    }
+
+    // Save user message
+    if (user && convId) {
+      await saveMessage(convId, 'user', text);
+    }
+
     try {
-      await streamChat(newMessages);
+      const assistantResponse = await streamChat(newMessages);
+      
+      // Save assistant response
+      if (user && convId && assistantResponse) {
+        await saveMessage(convId, 'assistant', assistantResponse);
+      }
     } catch (error) {
       console.error('Chat error:', error);
       setMessages(prev => [
@@ -156,15 +298,88 @@ export function AIChatBot() {
                 <Bot className="h-5 w-5" />
                 <span className="font-semibold">GoalStays AI</span>
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsOpen(false)}
-                className="h-8 w-8 text-primary-foreground hover:bg-primary-foreground/20"
-              >
-                <X className="h-4 w-4" />
-              </Button>
+              <div className="flex items-center gap-1">
+                {user && (
+                  <>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={startNewConversation}
+                      className="h-8 w-8 text-primary-foreground hover:bg-primary-foreground/20"
+                      title="New conversation"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setShowHistory(!showHistory)}
+                      className="h-8 w-8 text-primary-foreground hover:bg-primary-foreground/20"
+                      title="Chat history"
+                    >
+                      <History className="h-4 w-4" />
+                    </Button>
+                  </>
+                )}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsOpen(false)}
+                  className="h-8 w-8 text-primary-foreground hover:bg-primary-foreground/20"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
+
+            {/* History Panel */}
+            <AnimatePresence>
+              {showHistory && user && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="border-b bg-muted/30 overflow-hidden"
+                >
+                  <div className="p-3 max-h-[200px] overflow-y-auto">
+                    <p className="text-xs font-medium text-muted-foreground mb-2">Recent Conversations</p>
+                    {loadingHistory ? (
+                      <div className="flex justify-center py-4">
+                        <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                      </div>
+                    ) : conversations.length === 0 ? (
+                      <p className="text-sm text-muted-foreground text-center py-2">No saved conversations</p>
+                    ) : (
+                      <div className="space-y-1">
+                        {conversations.map(conv => (
+                          <div
+                            key={conv.id}
+                            className={`group flex items-center gap-2 p-2 rounded-lg hover:bg-muted cursor-pointer ${
+                              currentConversationId === conv.id ? 'bg-muted' : ''
+                            }`}
+                            onClick={() => loadConversation(conv.id)}
+                          >
+                            <MessageCircle className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                            <span className="text-sm truncate flex-1">{conv.title}</span>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                deleteConversation(conv.id);
+                              }}
+                            >
+                              <Trash2 className="h-3 w-3 text-destructive" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Messages */}
             <ScrollArea className="flex-1 p-4" ref={scrollRef}>
