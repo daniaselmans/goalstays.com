@@ -255,7 +255,14 @@ const SearchResults = () => {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.4, delay: index * 0.1 }}
                     >
-                      <HotelCard hotel={hotel} />
+                      <HotelCard 
+                        hotel={hotel} 
+                        searchParams={{
+                          checkIn: searchMeta?.checkIn,
+                          checkOut: searchMeta?.checkOut,
+                          hotelId: hotel.id,
+                        }}
+                      />
                     </motion.div>
                   ))}
                 </motion.div>
